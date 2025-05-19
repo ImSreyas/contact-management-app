@@ -6,13 +6,19 @@ export const useApi = () => {
   const [error, setError] = useState({});
   const [message, setMessage] = useState("");
 
-  const request = async (method, url, data = {}) => {
+  const request = async ({
+    method = "get",
+    url = "/",
+    data = {},
+    searchParams = "",
+  } = {}) => {
     setLoading(true);
     setError({});
     setMessage("");
 
     try {
-      const res = await api({ method, url, data });
+      const fullUrl = searchParams ? `${url}?${searchParams}` : url;
+      const res = await api({ method, url: fullUrl, data });
       setMessage(res.data.message);
       return res?.data;
     } catch (err) {

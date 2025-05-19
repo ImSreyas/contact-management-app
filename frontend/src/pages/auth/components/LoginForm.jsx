@@ -34,7 +34,11 @@ export default function LoginForm() {
   }, []);
 
   const onSubmit = async (data) => {
-    const response = await request("post", apiRoutes.auth.login, data);
+    const response = await request({
+      method: "post",
+      url: apiRoutes.auth.login,
+      data,
+    });
     if (response?.success) {
       myToast("success", "Login successful");
       if (response?.data?.user) {

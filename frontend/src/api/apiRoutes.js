@@ -4,6 +4,7 @@ export const apiRoutes = {
     login: "/auth/login",
   },
   user: {
-    profile: "/user/profile",
+    contacts: "/contacts",
+    profile: "/profile",
   },
 };

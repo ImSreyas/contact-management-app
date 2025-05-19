@@ -43,7 +43,11 @@ export default function SignupForm() {
 
   const onSubmit = async (data) => {
     const formData = new toFormData(data);
-    const res = await request("post", apiRoutes.auth.signup, formData);
+    const res = await request({
+      method: "post",
+      url: apiRoutes.auth.signup,
+      data: formData,
+    });
     console.log(res);
     if (res.success) {
       myToast("success", "Signup successful");

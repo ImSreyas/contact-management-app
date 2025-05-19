@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Nav from "@/components/Nav";
+import Nav from "@/components/nav/Nav";
 import { navHiddenRoutes, publicRoutes } from "./lib/const/routeContants";
 import AuthGuard from "./components/common/AuthGuard";
 
@@ -10,12 +10,14 @@ export default function Layout() {
   const isPrivateRoute = !publicRoutes.includes(path.pathname);
 
   return (
-    <main>
+    <main className="relative">
       {!isHidden && <Nav />}
       <div>
         {isPrivateRoute ? (
           <AuthGuard>
-            <Outlet />
+            <div className="px-20 py-8">
+              <Outlet />
+            </div>
           </AuthGuard>
         ) : (
           <Outlet />

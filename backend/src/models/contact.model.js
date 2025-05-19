@@ -6,6 +6,7 @@ const contactSchema = new mongoose.Schema(
     firstName: String,
     lastName: String,
     address: String,
+    location: String,
     company: String,
     phoneNumbers: [String],
   },
