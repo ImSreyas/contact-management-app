@@ -1,5 +1,4 @@
 import { toast } from "sonner";
-import React from "react";
 import { CircleCheck, AlertTriangle, Info, X, ShieldAlert } from "lucide-react";
 
 const iconMap = {
@@ -14,7 +13,7 @@ export default function myToast(type = "success", message = "") {
 
   toast.custom((t) => (
     <div
-      className="w-sm max-w-[90vw] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 shadow-lg flex items-center gap-3 relative pr-10"
+      className="rounded-md w-sm max-w-[90vw] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 shadow-lg flex items-center gap-3 relative pr-10 z-40"
       role="alert"
     >
       <div>{icon}</div>

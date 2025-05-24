@@ -4,8 +4,9 @@ import Contacts from "@/pages/contacts/Contacts";
 import Profile from "@/pages/profile/Profile";
 import NotFound from "@/pages/not-found/NotFound";
 import Layout from "@/Layout";
-import Auth from "@/pages/auth/Auth";
 import { Toaster } from "sonner";
+import Settings from "@/pages/settings/Settings";
+import Auth from "@/pages/auth/Auth";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
       },
     ],
   },

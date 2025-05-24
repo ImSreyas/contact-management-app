@@ -1,15 +1,26 @@
+import Contact from "../models/contact.model.js";
 import {
-  createContact,
-  getContacts,
   updateContact,
   deleteContact,
+  createContact,
 } from "../services/contact.service.js";
-import Contact from "../models/contact.model.js";
 import { sendSuccess, sendError } from "../utils.js";
 
 export const create = async (req, res) => {
-  const contact = await createContact(req.user.id, req.body);
-  res.status(201).json({ status: true, data: contact });
+  try {
+    const { contact, error } = await createContact(req.user.id, req.body);
+    if (error) {
+      return sendError(res, error, error.message, error.status || 400);
+    }
+    return sendSuccess(res, { contact }, "Contact created successfully", 201);
+  } catch (err) {
+    return sendError(
+      res,
+      { code: "500", error: err.message || "Internal server error" },
+      "Failed to create contact",
+      500
+    );
+  }
 };
 
 export const getAll = async (req, res) => {

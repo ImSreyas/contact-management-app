@@ -26,13 +26,15 @@ export default function Auth() {
 
       {/* First Section: Full Image */}
       <div className="relative w-full h-full col-span-2">
-        <img
-          alt="Background"
-          src="/tv1.png"
-          className="w-full h-full object-cover"
-          width={1920}
-          height={1080}
-        />
+        <div className="w-full h-full overflow-hidden">
+          <img
+            alt="Background"
+            src="/tv1.png"
+            className="w-full h-full object-cover"
+            width={1920}
+            height={1080}
+          />
+        </div>
       </div>
 
       {/* Second Section: Login Form */}
@@ -41,9 +43,10 @@ export default function Auth() {
           defaultValue="login"
           value={currentTab}
           onValueChange={handleTabChange}
+          className=""
         >
           <div className="w-full flex justify-center items-center pt-8 pb-6 sticky -top-2 bg-background z-10">
-            <TabsList type="retro">
+            <TabsList className="" type="retro">
               <TabsTrigger value="login" className="w-full" type="retro">
                 Login
               </TabsTrigger>
@@ -53,10 +56,16 @@ export default function Auth() {
             </TabsList>
           </div>
           <div>
-            <TabsContent value="login" className="w-full flex justify-center items-center min-h-[75dvh]">
+            <TabsContent
+              value="login"
+              className="w-full flex justify-center items-center min-h-[75dvh]"
+            >
               <LoginForm />
             </TabsContent>
-            <TabsContent value="signup" className="w-full flex justify-center items-center">
+            <TabsContent
+              value="signup"
+              className="w-full flex justify-center items-center"
+            >
               <SignupForm />
             </TabsContent>
           </div>

@@ -55,10 +55,16 @@ export default function Contacts() {
   }, [searchParams]);
 
   // Toolbar handlers
-  const handleSearch = (search, search_by) => {
+  const handleSearch = (search) => {
     setSearchParams((prev) => ({
       ...prev,
       search,
+    }));
+  };
+
+  const handleSearchBy = (search_by) => {
+    setSearchParams((prev) => ({
+      ...prev,
       search_by,
     }));
   };
@@ -79,9 +85,10 @@ export default function Contacts() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="pb-4 pt-2 space-y-6 relative">
       <ContactsToolbar
         onSearch={handleSearch}
+        onSearchBy={handleSearchBy}
         onSort={handleSort}
         search={searchParams.search}
         searchBy={searchParams.search_by}

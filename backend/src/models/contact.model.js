@@ -9,6 +9,7 @@ const contactSchema = new mongoose.Schema(
     location: String,
     company: String,
     phoneNumbers: [String],
+    isFavorite: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

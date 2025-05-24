@@ -30,3 +30,20 @@ export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
+
+export const contactSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  address: z.string().optional(),
+  location: z.string().optional(),
+  company: z.string().optional(),
+  phoneNumbers: z
+    .array(
+      z
+        .string()
+        .min(10, "Phone number is too short")
+        .max(15, "Phone number is too long")
+        .regex(/^\+?[1-9]\d{9,14}$/, "Invalid phone number format")
+    )
+    .min(1, "At least one phone number is required"),
+});

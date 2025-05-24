@@ -23,6 +23,12 @@ export default function Layout() {
           <Outlet />
         )}
       </div>
+      {/* <div className="fixed inset-0 -z-10">
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 transform w-screen h-screen bg-no-repeat bg-center bg-cover blur-xl opacity-30"
+          style={{ backgroundImage: "url('/blob/3.svg')" }}
+        />
+      </div> */}
     </main>
   );
 }
