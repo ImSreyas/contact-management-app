@@ -10,8 +10,9 @@ const contactSchema = new mongoose.Schema(
     company: String,
     phoneNumbers: [String],
     isFavorite: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Contact = mongoose.model("Contact", contactSchema);

@@ -3,6 +3,8 @@ import {
   updateContact,
   deleteContact,
   createContact,
+  toggleFav,
+  getContact,
 } from "../services/contact.service.js";
 import { sendSuccess, sendError } from "../utils.js";
 
@@ -18,7 +20,7 @@ export const create = async (req, res) => {
       res,
       { code: "500", error: err.message || "Internal server error" },
       "Failed to create contact",
-      500
+      500,
     );
   }
 };
@@ -26,10 +28,12 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log(req.query);
     const {
       search = "",
       search_by = "name",
       sort = "createdAt",
+      fav = "all",
       page = 1,
       page_size = 10,
     } = req.query;
@@ -39,7 +43,14 @@ export const getAll = async (req, res) => {
     const pageSize = parseInt(page_size, 10) || 10;
 
     // Build search filter
-    let filter = { userId };
+    let filter = { userId, isDeleted: false };
+
+    if (fav === "favorite") {
+      filter.isFavorite = true;
+    } else if (fav === "not-favorite") {
+      filter.isFavorite = false;
+    }
+
     if (search) {
       switch (search_by) {
         case "phoneNumbers":
@@ -88,13 +99,14 @@ export const getAll = async (req, res) => {
         res,
         { message: "Page not found" },
         "Page not found",
-        404
+        404,
       );
     }
 
     // Query contacts with pagination
     const contacts = await Contact.find(filter)
       .sort(sortOption)
+      .collation({ locale: "en", strength: 1 })
       .skip((pageNum - 1) * pageSize)
       .limit(pageSize);
 
@@ -108,29 +120,113 @@ export const getAll = async (req, res) => {
         totalPages,
       },
       "Contacts fetched successfully",
-      200
+      200,
     );
   } catch (err) {
     return sendError(res, err, "Failed to fetch contacts", 500);
   }
 };
 
-export const update = async (req, res) => {
-  const contact = await updateContact(req.params.id, req.body);
-  if (!contact) {
-    return res
-      .status(400)
-      .json({ status: false, data: "No Contact found with the provided id" });
+export const getOne = async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  if (!userId) {
+    return sendError(res, {}, "Unautherized", 401);
   }
-  res.json({ status: true, data: contact });
+  if (!id) {
+    return sendError(
+      res,
+      { code: "129", error: "Id not provided in the URL" },
+      "Params missing",
+      400,
+    );
+  }
+
+  try {
+    const response = await getContact(userId, id);
+    if (response) {
+      return sendSuccess(res, { contact: response.contact }, response.message);
+    } else {
+      return sendError(res, {}, "Something went wrong");
+    }
+  } catch (error) {
+    return sendError(res, error, "Something went wrong");
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const { contact, error } = await updateContact(
+      req.user.id,
+      req.params.id,
+      req.body,
+    );
+    if (error) {
+      return sendError(res, error, error.message, error.status || 400);
+    }
+    return sendSuccess(res, { contact }, "Contact updated successfully", 201);
+  } catch (err) {
+    return sendError(
+      res,
+      { code: "500", error: err.message || "Internal server error" },
+      "Failed to create contact",
+      500,
+    );
+  }
+};
+
+export const toggleFavorite = async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const { isFavorite } = req.body;
+
+  if (!userId) {
+    return sendError(res, {}, "Unautherized", 401);
+  }
+
+  if (!id || isFavorite === undefined) {
+    return sendError(
+      res,
+      { code: "194", error: "isFavorite fields is missing" },
+      "Fields missing",
+      400,
+    );
+  }
+
+  try {
+    const updatedContact = await toggleFav(userId, id, isFavorite);
+    return sendSuccess(
+      res,
+      updatedContact,
+      "Successfully updated favorite contact",
+    );
+  } catch (error) {
+    return sendError(res, error, "Something went wrong");
+  }
 };
 
 export const remove = async (req, res) => {
-  const response = await deleteContact(req.params.id);
-  if (!response) {
-    return res
-      .status(404)
-      .json({ status: false, message: "Contact not found" });
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  if (!userId) {
+    return sendError(res, {}, "Unautherized", 401);
   }
-  res.status(200).json({ status: true, message: "Contact deleted" });
+
+  if (!id) {
+    return sendError(
+      res,
+      { code: "129", error: "Id not provided in the URL" },
+      "Params missing",
+      400,
+    );
+  }
+
+  try {
+    const deletedContact = await deleteContact(userId, id);
+    return sendSuccess(res, deletedContact, "Contact deleted successfully");
+  } catch (error) {
+    return sendError(res, error, "Failed to delete contact", 400);
+  }
 };

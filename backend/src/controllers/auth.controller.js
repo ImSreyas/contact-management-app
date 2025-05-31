@@ -6,8 +6,9 @@ import {
 import { sendError, sendSuccess } from "../utils.js";
 
 export const register = async (req, res) => {
+  const profilePicPath = req.file?.path;
   try {
-    const user = await registerService(req.body);
+    const user = await registerService(req.body, profilePicPath);
     return sendSuccess(res, { user }, "User registered successfully", 201);
   } catch (error) {
     return sendError(res, error, "User registration failed", 400);
@@ -35,7 +36,7 @@ export const login = async (req, res) => {
       res,
       { user: tokens.user },
       "User logged in successfully",
-      200
+      200,
     );
   } catch (err) {
     return sendError(res, err, "User login failed", 400);
@@ -50,7 +51,7 @@ export const refresh = async (req, res) => {
         res,
         { message: "Refresh token missing" },
         "Refresh token missing",
-        400
+        400,
       );
     }
 
@@ -74,7 +75,7 @@ export const refresh = async (req, res) => {
       res,
       { user: tokens.user },
       "Token refreshed successfully",
-      200
+      200,
     );
   } catch (err) {
     return sendError(res, err, "Token refresh failed", 400);

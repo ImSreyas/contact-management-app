@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 import { registerSchema } from "../schema/formSchema.js";
 import { AppError } from "../utils.js";
 
-export const registerService = async (userData) => {
+export const registerService = async (userData, profilePicPath = null) => {
   const result = registerSchema.safeParse(userData);
   if (!result.success) {
     const errors = result.error;
@@ -16,8 +16,14 @@ export const registerService = async (userData) => {
     throw new AppError({ code: "101", error: "Email Already exist" });
   }
 
+  //todo: include a phone number check as well
+
   const hashed = await bcrypt.hash(userData.password, 10);
-  const user = await User.create({ ...userData, password: hashed });
+  const user = await User.create({
+    ...userData,
+    password: hashed,
+    profilePicture: profilePicPath ? "/" + profilePicPath : "",
+  });
   return {
     name: `${user.firstName} ${user.lastName}`,
     email: user.email,
@@ -70,7 +76,7 @@ export const refreshTokenService = async (refreshToken) => {
       process.env.JWT_REFRESH_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     return {
