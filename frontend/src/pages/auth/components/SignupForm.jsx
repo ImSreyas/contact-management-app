@@ -21,6 +21,8 @@ import { toFormData } from "@/lib/utils";
 import { apiRoutes } from "@/api/apiRoutes";
 import myToast from "../../../lib/custom/toast";
 import { useEffect } from "react";
+import { format } from "date-fns";
+import { useRef } from "react";
 
 export default function SignupForm() {
   const {
@@ -34,6 +36,7 @@ export default function SignupForm() {
     resolver: zodResolver(signupSchema),
   });
   const { request, loading, error: apiError } = useApi();
+  const profilePicRef = useRef(null);
 
   useEffect(() => {
     if (apiError?.code === "101") {
@@ -42,13 +45,12 @@ export default function SignupForm() {
   }, [apiError, setFocus]);
 
   const onSubmit = async (data) => {
-    const formData = new toFormData(data);
+    const formData = toFormData(data);
     const res = await request({
       method: "post",
       url: apiRoutes.auth.signup,
       data: formData,
     });
-    console.log(res);
     if (res.success) {
       myToast("success", "Signup successful");
     } else {
@@ -101,7 +103,7 @@ export default function SignupForm() {
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="demo@example.com"
               {...register("email")}
             />
@@ -183,6 +185,7 @@ export default function SignupForm() {
               type="file"
               accept="image/*"
               onChange={(e) => setValue("profilePicture", e.target.files[0])}
+              ref={profilePicRef}
             />
             {errors.profilePicture && (
               <p className="text-red-500 text-sm">

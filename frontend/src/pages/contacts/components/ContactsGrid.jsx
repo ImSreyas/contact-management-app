@@ -24,10 +24,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useApi } from "@/hooks/useApi";
+import { apiRoutes } from "@/api/apiRoutes";
 
-export default function ContactsGrid({ contacts, loading }) {
+export default function ContactsGrid({ contacts, loading, onAction }) {
   const [selectedContact, setSelectedContact] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!detailsOpen) {
+      setSelectedContact(null);
+    }
+  }, [detailsOpen]);
 
   const handleOpenDetails = useCallback((contact) => {
     setSelectedContact(contact);
@@ -43,18 +51,22 @@ export default function ContactsGrid({ contacts, loading }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       {contacts.map((contact) => (
         <div
           key={contact._id}
-          className="bg-background/60 backdrop-blur-2xl dark:bg-zinc-900 border rounded-lg p-5 flex flex-col gap-2"
+          className="bg-background/50 backdrop-blur-lg dark:bg-zinc-900 border rounded-lg p-5 flex flex-col gap-2"
         >
           <div className="flex items-center justify-between">
             <div className="font-bold text-[1.3rem]">
               {contact.firstName} {contact.lastName}
             </div>
             <div className="flex gap-2">
-              <Fav value={contact.isFavorite} />
+              <Fav
+                id={contact._id}
+                value={contact.isFavorite}
+                onAction={onAction}
+              />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -120,9 +132,10 @@ export default function ContactsGrid({ contacts, loading }) {
         </div>
       ))}
       <ContactDetails
-        contact={selectedContact}
+        id={selectedContact?._id}
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
+        onAction={onAction}
       />
     </div>
   );
@@ -207,23 +220,39 @@ export function PhoneBox({ phone }) {
   );
 }
 
-export function Fav({ value }) {
+export function Fav({ id, value, onAction = null }) {
   const [isFav, setIsFav] = useState(value || false);
-  const [loading, setLoading] = useState(false);
+  const { request, loading } = useApi();
 
-  const handleFav = useCallback(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setIsFav((val) => !val);
-      setLoading(false);
-    }, 5000);
-    myToast("success", isFav ? "Removed from favorites" : "Added to favorites");
-  }, [isFav]);
+  const handleFav = async () => {
+    const response = await request({
+      method: "put",
+      url: apiRoutes.user.contacts.updateFavorite(id),
+      data: { isFavorite: !isFav },
+    });
+    if (response.success) {
+      const fav = response?.data?.contact?.isFavorite;
+      if (fav !== null) {
+        setIsFav(fav);
+        onAction?.();
+      } else {
+        myToast("error", "Something went wrong");
+        return;
+      }
+      myToast(
+        "success",
+        isFav ? "Removed from favorites" : "Added to favorites",
+      );
+    } else {
+      myToast("error", response.message || "Failed to update favorite status");
+    }
+  };
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
+          disabled={loading}
           size="icon"
           variant="outline"
           className={cn(
@@ -254,13 +283,15 @@ export function Fav({ value }) {
 
 function NoContacts() {
   return (
-    <div className="text-center text-muted-foreground py-20 border-2 rounded-lg border-dashed">
-      <div className="flex flex-col items-center justify-center">
+    <div className="text-center text-muted-foreground h-[60vh] border-2 rounded-lg border-dashed bg-muted/10">
+      <div className="flex flex-col items-center justify-center h-full w-full">
         <Layers />
-        <div className="mt-2">No contacts found.</div>
-        <div className="text-sm text-muted-foreground/50">
-          Add a new contact to show here
-        </div>
+        <h2 className="relative mt-4 text-md font-semibold text-muted-foreground z-10">
+          No Contacts Found
+        </h2>
+        <p className="relative mt-1 text-sm text-muted-foreground/70 z-10">
+          Add a new contact to display them here.
+        </p>
       </div>
     </div>
   );

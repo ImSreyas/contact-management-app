@@ -51,7 +51,6 @@ export default function UpdateContact({ contactId, onContactUpdated }) {
     name: "phoneNumbers",
   });
 
-  // Fetch contact data when dialog opens
   useEffect(() => {
     if (open && contactId) {
       setFetching(true);
@@ -60,7 +59,6 @@ export default function UpdateContact({ contactId, onContactUpdated }) {
         url: apiRoutes.user.contacts.getOne(contactId),
       }).then((res) => {
         if (res?.success && res.data) {
-          // Ensure at least one phone number field
           const data = {
             ...res?.data?.contact,
             phoneNumbers: res?.data?.contact?.phoneNumbers?.length
@@ -75,7 +73,6 @@ export default function UpdateContact({ contactId, onContactUpdated }) {
         setFetching(false);
       });
     }
-    // eslint-disable-next-line
   }, [open, contactId]);
 
   const onSubmit = async (data) => {
@@ -96,16 +93,11 @@ export default function UpdateContact({ contactId, onContactUpdated }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="w-6 h-6 p-4"
-          // onClick={() => handleOpenDetails(contact)}
-        >
+        <Button size="icon" variant="outline" className="w-6 h-6 p-4">
           <UserRoundPen />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-4xl max-w-[90vw] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="md:min-w-4xl min-w-[90vw] max-h-[85vh] overflow-y-auto">
         <DialogHeader className={undefined}>
           <DialogTitle className={undefined}>Edit Contact</DialogTitle>
           <DialogDescription />

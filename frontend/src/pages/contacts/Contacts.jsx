@@ -1,6 +1,6 @@
 import { apiRoutes } from "@/api/apiRoutes";
 import { useApi } from "@/hooks/useApi";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ContactsToolbar from "./components/ContactsToolbar";
 import ContactsGrid from "./components/ContactsGrid";
 import ContactsPagination from "./components/ContactsPagination";
@@ -10,33 +10,33 @@ export default function Contacts() {
   const [contactsData, setContactsData] = useState({
     records: [],
     page: 1,
-    pageSize: 10,
+    pageSize: 12,
     totalPages: 1,
     totalRecords: 0,
   });
 
-  // Search and filter state
   const [searchParams, setSearchParams] = useState({
     search: "",
     search_by: "name",
     sort: "createdAt",
+    fav: "all",
   });
 
-  // Fetch contacts
   const getContacts = async (
     page = 1,
-    pageSize = 10,
-    params = searchParams
+    pageSize = 12,
+    params = searchParams,
   ) => {
     const urlParams = new URLSearchParams();
-    urlParams.set("page", page);
-    urlParams.set("page_size", pageSize);
+    urlParams.set("page", page.toString());
+    urlParams.set("page_size", pageSize.toString());
     if (params.search) urlParams.set("search", params.search);
     if (params.search_by) urlParams.set("search_by", params.search_by);
     if (params.sort) urlParams.set("sort", params.sort);
+    if (params.fav) urlParams.set("fav", params.fav);
 
     const response = await request({
-      url: apiRoutes.user.contacts,
+      url: apiRoutes.user.contacts.getAll,
       searchParams: urlParams.toString(),
     });
     if (response?.success) {
@@ -48,13 +48,10 @@ export default function Contacts() {
     }
   };
 
-  // Initial fetch and whenever search/filter/sort changes
   useEffect(() => {
     getContacts(1, contactsData.pageSize, searchParams);
-    // eslint-disable-next-line
   }, [searchParams]);
 
-  // Toolbar handlers
   const handleSearch = (search) => {
     setSearchParams((prev) => ({
       ...prev,
@@ -76,12 +73,24 @@ export default function Contacts() {
     }));
   };
 
-  // Pagination handlers
+  const handleFavoriteFilter = (fav) => {
+    setSearchParams((prev) => ({
+      ...prev,
+      fav,
+    }));
+  };
+
   const handlePageChange = (page) => {
     getContacts(page, contactsData.pageSize, searchParams);
   };
   const handlePageSizeChange = (pageSize) => {
     getContacts(1, pageSize, searchParams);
+    setContactsData({ ...contactsData, pageSize });
+  };
+
+  const onAction = (action = "general") => {
+    if (action === "fav") return;
+    getContacts(1, contactsData.pageSize);
   };
 
   return (
@@ -90,11 +99,18 @@ export default function Contacts() {
         onSearch={handleSearch}
         onSearchBy={handleSearchBy}
         onSort={handleSort}
+        onFavoriteFilter={handleFavoriteFilter}
         search={searchParams.search}
         searchBy={searchParams.search_by}
         sort={searchParams.sort}
+        filter={searchParams.fav}
+        onAction={onAction}
       />
-      <ContactsGrid contacts={contactsData.records} loading={loading} />
+      <ContactsGrid
+        contacts={contactsData.records}
+        loading={loading}
+        onAction={onAction}
+      />
       <ContactsPagination
         page={contactsData.page}
         totalPages={contactsData.totalPages}

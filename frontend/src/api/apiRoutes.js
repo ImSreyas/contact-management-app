@@ -4,7 +4,24 @@ export const apiRoutes = {
     login: "/auth/login",
   },
   user: {
-    contacts: "/contacts",
-    profile: "/profile",
+    contacts: {
+      getAll: "/contacts",
+      create: "/contacts",
+      getOne: (id) => `/contacts/get/${id}`,
+      update: (id) => `/contacts/update/${id}`,
+      delete: (id) => `/contacts/delete/${id}`,
+      updateFavorite: (id) => `/contacts/update-favorite/${id}`,
+    },
+    profile: {
+      get: "/user",
+      update: "/user",
+      profilePicture: {
+        update: "/user/profile-picture/",
+        delete: "/user/profile-picture/",
+      },
+      password: {
+        reset: "/user/reset-password",
+      },
+    },
   },
 };

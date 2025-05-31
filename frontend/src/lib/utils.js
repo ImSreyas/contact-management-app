@@ -14,7 +14,7 @@ export function toFormData(data) {
     if (value instanceof Date) {
       formData.append(key, format(value, "yyyy-MM-dd"));
     } else if (value instanceof File) {
-      formData.append(key, value, value.name);
+      formData.append(key, value);
     } else if (value !== undefined && value !== null) {
       formData.append(key, value.toString());
     }

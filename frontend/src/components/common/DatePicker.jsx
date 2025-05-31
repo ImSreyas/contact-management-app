@@ -26,9 +26,10 @@ export default function DatePicker({ state }) {
             variant="outline"
             className={cn(
               "w-auto justify-start text-left font-normal grow",
-              !date && "text-muted-foreground"
+              !date && "text-muted-foreground",
             )}
             type="button"
+            size={undefined}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? format(date, "d MMMM, yyyy") : <span>Pick a date</span>}
@@ -52,6 +53,8 @@ export default function DatePicker({ state }) {
             fromYear={1900}
             toYear={new Date().getFullYear()}
             captionLayout="dropdown-buttons"
+            className={undefined}
+            classNames={undefined}
           />
         </PopoverContent>
       </Popover>
@@ -61,6 +64,7 @@ export default function DatePicker({ state }) {
           variant="outline"
           size="icon"
           onClick={handleClear}
+          className={undefined}
         >
           <X />
         </Button>

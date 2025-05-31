@@ -17,7 +17,7 @@ import myToast from "@/lib/custom/toast";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { apiRoutes } from "@/api/apiRoutes";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, PlusIcon, Trash2 } from "lucide-react";
 import { contactSchema } from "@/lib/schema/formSchema";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -59,10 +59,9 @@ export default function AddContact({ onContactAdded }) {
   const onSubmit = async (data) => {
     const res = await request({
       method: "post",
-      url: apiRoutes.user.contacts,
+      url: apiRoutes.user.contacts.create,
       data,
     });
-    console.log(res);
     if (res?.success) {
       myToast("success", "Contact added successfully");
       setOpen(false);
@@ -81,7 +80,10 @@ export default function AddContact({ onContactAdded }) {
           className="w-fit flex items-center gap-2"
           size=""
         >
-          <span>Add Contact</span>
+          <span className="sm:hidden">
+            <PlusIcon />
+          </span>
+          <span className="hidden sm:block">Add Contact</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="min-w-4xl max-w-[90vw] max-h-[85vh] overflow-y-auto">

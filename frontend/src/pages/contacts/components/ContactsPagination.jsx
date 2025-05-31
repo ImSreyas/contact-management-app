@@ -40,11 +40,11 @@ export default function ContactsPagination({
           value={pageSize.toString()}
           onValueChange={(v) => onPageSizeChange(Number(v))}
         >
-          <SelectTrigger className="w-24">
+          <SelectTrigger className="w-fit">
             <SelectValue placeholder="Page Size" />
           </SelectTrigger>
           <SelectContent>
-            {[5, 10, 20, 50].map((size) => (
+            {[12, 24, 48, 96].map((size) => (
               <SelectItem key={size} value={size.toString()}>
                 {size} / page
               </SelectItem>

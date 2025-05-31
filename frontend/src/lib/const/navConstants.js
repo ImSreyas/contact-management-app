@@ -7,8 +7,8 @@ export const navPaths = [
     label: "Profile",
     path: "/profile",
   },
-  {
-    label: "Settings",
-    path: "/settings",
-  },
+  // {
+  //   label: "Settings",
+  //   path: "/settings",
+  // },
 ];

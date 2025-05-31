@@ -6,7 +6,7 @@ import ProfilePopup from "./components/ProfilePopup";
 
 export default function Nav() {
   return (
-    <nav className="flex justify-between items-center gap-2 min-h-20 h-fit px-20 py-2 sticky top-0 bg-background/10 backdrop-blur-md z-20 border-b">
+    <nav className="flex justify-between items-center gap-2 min-h-20 h-fit px-8 md:px-20 py-2 sticky top-0 bg-background/10 backdrop-blur-md z-20 border-b">
       {/* Logo section */}
       <div></div>
 
@@ -36,7 +36,7 @@ function NavLinks({ paths }) {
               "px-3 py-1 text-foreground/70 border border-primary font-medium rounded-lg",
               location.pathname === path
                 ? "text-primary border border-dashed"
-                : "border-transparent"
+                : "border-transparent",
             )}
           >
             <a href={path}>{label}</a>
