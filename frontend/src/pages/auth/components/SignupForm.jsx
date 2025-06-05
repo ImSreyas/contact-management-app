@@ -21,7 +21,6 @@ import { toFormData } from "@/lib/utils";
 import { apiRoutes } from "@/api/apiRoutes";
 import myToast from "../../../lib/custom/toast";
 import { useEffect } from "react";
-import { format } from "date-fns";
 import { useRef } from "react";
 
 export default function SignupForm() {

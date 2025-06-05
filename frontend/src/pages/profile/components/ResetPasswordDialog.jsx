@@ -15,7 +15,7 @@ import { useApi } from "@/hooks/useApi";
 import myToast from "@/lib/custom/toast";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { apiRoutes } from "@/api/apiRoutes";
-import { RotateCcwKey, UserRoundPen } from "lucide-react";
+import { RotateCcwKey } from "lucide-react";
 import { resetPasswordSchema } from "@/lib/schema/formSchema";
 import { Spinner } from "@/components/ui/spinner";
 
